@@ -1,0 +1,4 @@
+# Using Models in openAI
+openai
+langchain
+langchain-community
