@@ -1,0 +1,84 @@
+version: "3.9"
+services:
+  redis:
+    container_name: redis
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+
+  db:
+      image: postgres:latest
+      container_name: POSTGRES_DB
+      
+      environment:
+        POSTGRES_DB: ${DB_NAME}
+        POSTGRES_USER: ${DB_USER}
+        POSTGRES_PASSWORD: ${DB_PASSWORD}
+      volumes:
+        - ./data/db:/var/lib/postgresql/data/
+      
+      ports:
+        - "5432:5432"
+
+  backend:
+      build: .
+      container_name: backend
+      command: python manage.py runserver 0.0.0.0:8000 
+      volumes:
+        - ./core:/app
+      ports:
+        - "8000:8000"
+      
+      depends_on:
+        - redis
+        - db
+    
+  
+  worker:
+      build: .
+      command: celery -A Core worker --loglevel=info
+      volumes:
+        - ./core:/app
+      depends_on:
+        - redis
+        - backend
+      environment:
+      - DJANGO_SETTINGS_MODULE=Core.envs.development
+
+
+  smtp4dev:
+      image: rnwood/smtp4dev:v3
+      restart: always
+      ports:
+        # Change the number before : to the port the web interface should be accessible on
+        - '5000:80'
+        # Change the number before : to the port the SMTP server should be accessible on
+        - '25:25'
+        # Change the number before : to the port the IMAP server should be accessible on
+        - '143:143'
+      volumes:
+        # This is where smtp4dev stores the database..
+          - smtp4dev-data:/smtp4dev
+      environment:
+        - ServerOptions__HostName=smtp4dev
+
+
+
+
+  pgadmin:
+    container_name: container-pgadmin
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    restart: unless-stopped
+
+volumes:
+  smtp4dev-data:
+  

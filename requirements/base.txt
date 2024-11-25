@@ -1,0 +1,61 @@
+# general  modules
+django==4.2
+tzdata
+setuptools
+python-decouple
+Pillow
+
+#database
+psycopg2-binary
+
+
+# environmental variables
+python-dotenv
+
+# third party modules
+djangorestframework
+markdown       # Markdown support for the browsable API.
+django-filter  # Filtering support
+django-cors-headers
+
+
+
+# Authorization
+djangorestframework-simplejwt
+
+# refactoring
+flake8
+black
+pytest
+pytest-django
+
+
+# documentations
+coreapi
+drf-yasg
+drf-yasg[validation]
+
+#email third party
+django-mail-templated
+
+# admin Panel 
+django-jazzmin
+
+
+
+
+# data
+Faker
+
+
+# background Process and cache
+celery
+Redis
+django-celery-beat # for bothe backend and worker  
+django-redis # for bothe backend and worker  
+
+
+# Using Models in openAI
+openai
+langchain
+langchain-community
