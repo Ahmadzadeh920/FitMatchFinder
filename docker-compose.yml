@@ -45,7 +45,7 @@ services:
         - redis
         - backend
       environment:
-      - DJANGO_SETTINGS_MODULE=Core.envs.development
+      - DJANGO_SETTINGS_MODULE=Core.settings.development
 
 
   smtp4dev:
