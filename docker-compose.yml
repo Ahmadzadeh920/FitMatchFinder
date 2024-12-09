@@ -34,7 +34,8 @@ services:
       depends_on:
         - redis
         - db
-    
+      environment:
+        - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
   
   worker:
       build: .
@@ -46,6 +47,7 @@ services:
         - backend
       environment:
       - DJANGO_SETTINGS_MODULE=Core.settings.development
+      - PYTHONPATH=/app
 
 
   smtp4dev:
