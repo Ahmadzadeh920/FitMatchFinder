@@ -54,9 +54,9 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "drf_yasg",
     "rest_framework_simplejwt.token_blacklist",
-    "accounts"
-  
-   
+    "django_celery_beat",
+    "django_celery_results",
+    "accounts",
     
 ]
 
@@ -167,11 +167,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # celery
-CELERY_BROKER_URL = "redis://redis:6379/0"
+#This configures Redis as the datastore between Django + Celery
+CELERY_BROKER_URL = 'redis://redis:6379/0' 
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
+# save Celery task results in Django's database
 CELERY_RESULT_BACKEND= "redis://redis:6379/0"
 CELERY_TIME_ZONE = "Asia/Tehran"
+# this allows you to schedule items in the Django admin.
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
 
 
 # Caching configuration
