@@ -9,8 +9,13 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
+from .views import RegisterationApiview, ActivationAccountJWT 
+
 app_name = "api_v1"
 urlpatterns = [
-
+    # registeration_process 
+    path('register/',RegisterationApiview.as_view(), name='register'),
+    path("activate/jwt/<str:token>", ActivationAccountJWT.as_view(), name="activation_account_jwt",),
+   
     
 ]

@@ -37,9 +37,9 @@ services:
       environment:
         - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
   
-  worker:
+  worker_one:
       build: .
-      command: celery -A Core worker --loglevel=info
+      command: celery -A Core worker --loglevel=info -Q queue_one
       volumes:
         - ./core:/app
       depends_on:
@@ -49,6 +49,17 @@ services:
       - DJANGO_SETTINGS_MODULE=Core.settings.development
       - PYTHONPATH=/app
 
+  worker_two:
+      build: .
+      command: celery -A Core worker --loglevel=info -Q queue_two
+      volumes:
+        - ./core:/app
+      depends_on:
+        - redis
+        - backend
+      environment:
+        - DJANGO_SETTINGS_MODULE=Core.settings.development
+        - PYTHONPATH=/app
 
   smtp4dev:
       image: rnwood/smtp4dev:v3
@@ -65,10 +76,8 @@ services:
           - smtp4dev-data:/smtp4dev
       environment:
         - ServerOptions__HostName=smtp4dev
-
-
-
-
+  
+  
   pgadmin:
     container_name: container-pgadmin
     image: dpage/pgadmin4
