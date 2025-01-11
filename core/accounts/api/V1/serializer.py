@@ -1,8 +1,9 @@
 import re
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.core import exceptions
-from ...models import CustomUser
+from ...models import CustomUser, Profile
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(max_length=255, write_only=True)
@@ -47,3 +48,89 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop("password1", None)
         return CustomUser.objects.create_user(**validated_data)
+    
+
+# Login serializer
+class Customized_TOKEN_OBTAIN_PAIR_SERIALIZER(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        validated_data = super().validate(attrs)
+        if not self.user.is_verified:
+            raise serializers.ValidationError({"details": "user is not verified"})
+        validated_data["email"] = self.user.email
+        validated_data["user_id"] = self.user.id
+        return validated_data
+
+#  for reset password
+class ResetPasswordRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    new_password = serializers.RegexField(
+        regex=r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
+        write_only=True,
+        error_messages={'invalid': ('Password must be at least 8 characters long with at least one capital letter and symbol')})
+    confirm_password = serializers.CharField(write_only=True, required=True)
+
+
+# this serializer for changing password
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True, required=True, validators=[validate_password]
+    )
+    password2 = serializers.CharField(write_only=True, required=True)
+    old_password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ("old_password", "password", "password2")
+
+    def validate(self, attrs):
+        if attrs["password"] != attrs["password2"]:
+            raise serializers.ValidationError(
+                {"password": "Password fields didn't match."}
+            )
+        try:
+            validate_password(attrs.get("password"))
+        except exceptions.ValidationError as e:
+
+            serializers.ValidationError({"Password": list(e.messages)})
+
+        return attrs
+
+    def validate_old_password(self, value):
+        user = self.context["request"].user
+        if not user.check_password(value):
+            raise serializers.ValidationError(
+                {"old_password": "Old password is not correct"}
+            )
+        return value
+
+    def update(self, instance, validated_data):
+
+        instance.set_password(validated_data["password"])
+        instance.save()
+
+        return instance
+    
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['first_name', 'last_name', 'profile_picture', 'phone_number']
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            # Check if the instance is provided; if it is, we are updating
+            if self.instance:
+                # Make 'profile_picture' optional during updates
+                self.fields['profile_picture'].required = False
+                # Optionally, you can also set other fields as required if needed
+                self.fields['first_name'].required = True
+                self.fields['last_name'].required = True
+                self.fields['phone_number'].required = True
+
+    def validate(self, attrs):
+        # Add any additional validation logic if necessary
+        return super().validate(attrs)
+

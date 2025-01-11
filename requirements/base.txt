@@ -60,3 +60,10 @@ django-celery-results
 openai
 langchain
 langchain-community
+
+
+# huggingface
+torch
+torchvision
+transformers
+chromadb

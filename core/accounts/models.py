@@ -1,7 +1,9 @@
 from django.db import models
+from datetime import datetime
 
 # Create your models here.
 from django.db import models
+import uuid
 from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
@@ -73,7 +75,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 # class profile
 class Profile(models.Model):
-    
     user = models.OneToOneField(CustomUser,related_name="User", on_delete=models.CASCADE)
     first_name = models.CharField()
     last_name = models.CharField()
@@ -82,7 +83,7 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.email} Profile"
     
-    @receiver(post_save, sender=CustomUser)
+    @receiver(post_save, sender= CustomUser)
     def create_user_profile(sender, instance, created, **kwargs):
         if created:
             Profile.objects.create(user=instance)
@@ -90,9 +91,11 @@ class Profile(models.Model):
 
 
 class List_API_Key(models.Model):
+    def generate_uuid():
+        return str(uuid.uuid5(uuid.NAMESPACE_OID, datetime.now().isoformat()))
     
     profile = models.ForeignKey(Profile, related_name="Profle", on_delete=models.CASCADE)
-    key = models.CharField(max_length=255, unique=True)
+    key = models.CharField(max_length=255, unique=True, default= generate_uuid , blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)    
     is_active = models.BooleanField(default=False)
@@ -100,11 +103,8 @@ class List_API_Key(models.Model):
     description = models.TextField(blank=True)
     def __str__(self):
         return self.key
+       
     
-    @receiver(post_save, sender=Profile)
-    def create_profile_Keys(sender, instance, created, **kwargs):
-        if created:
-            List_API_Key.objects.create(Profile=instance)
 
 # reset password
 class PasswordReset(models.Model):
