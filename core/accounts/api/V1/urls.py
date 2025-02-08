@@ -31,5 +31,8 @@ urlpatterns = [
 
     # Profile
     path( "profile/", ProfileApiView.as_view(), name="profile_api_view",),
+
+    path('keys/', ListCreatAPIKeyView.as_view(), name='list-create-api-key'),
+    path('keys/<int:pk>/', ListAPIKeyDetailView.as_view(), name='retrieve-update-destroy-api-key'),
     
 ]

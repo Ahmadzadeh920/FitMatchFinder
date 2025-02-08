@@ -22,6 +22,15 @@ services:
       ports:
         - "5432:5432"
 
+  chromadb:
+    container_name: chromadb
+    image: chromadb/chroma:latest  # Replace with the correct ChromaDB image if available
+    ports:
+      - "8001:8000"
+    environment:
+      - ALLOW_RESET=true
+    volumes:
+      - chroma_data:/chroma/chroma
   backend:
       build: .
       container_name: backend
@@ -34,8 +43,10 @@ services:
       depends_on:
         - redis
         - db
+        - chromadb
       environment:
         - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+        - CHROMA_SERVER=chromadb:8000
   
   worker_one:
       build: .
@@ -89,7 +100,10 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     restart: unless-stopped
+# Streamlit Service
+ 
 
 volumes:
   smtp4dev-data:
+  chroma_data:
   

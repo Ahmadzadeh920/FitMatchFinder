@@ -1,0 +1,5 @@
+# for the chromadb and sqlite3
+#in this address "/usr/local/lib/python3.8/site-packages/chromadb/__init__.py"
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')

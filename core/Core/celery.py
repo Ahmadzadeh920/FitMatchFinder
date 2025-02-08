@@ -3,7 +3,7 @@ from celery import Celery
 from datetime import timedelta
 
 # Set the default Django settings module for the 'celery' program.
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Core.settings.common")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Core.settings.development")
 
 app = Celery("Core")
 # Using a string here means the worker doesn't have to serialize
@@ -21,5 +21,14 @@ app.conf.beat_schedule = {
         "task": "accounts.tasks.send_feedback_email_task",
         "schedule": timedelta(seconds=10),
     },
-    
+    'create-embedding-task': {
+        'task': 'CreateEmbedding',
+        'schedule': timedelta(seconds=3),  # Run every 3 seconds
+        
+    },
+    'delete-embedding-task': {
+        'task': 'DeleteEmbedding',
+        'schedule': timedelta(seconds=7),  # Run every 3 seconds
+        
+    },
 }

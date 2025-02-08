@@ -20,7 +20,8 @@ from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import include
-
+from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 # from rest_framework.documentation import include_docs_urls
 from rest_framework import permissions
@@ -45,6 +46,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
+    path("FashionClip/", include("FashinClipRecommendation.urls")),
 
     # This path for api  documentations
     path(
@@ -64,4 +66,5 @@ urlpatterns = [
     ),
 ]
 # add static paths to urls
+urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

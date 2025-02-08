@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.core import exceptions
-from ...models import CustomUser, Profile
+from ...models import CustomUser, Profile, List_API_Key
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(max_length=255, write_only=True)
@@ -134,3 +134,10 @@ class ProfileSerializer(serializers.ModelSerializer):
         # Add any additional validation logic if necessary
         return super().validate(attrs)
 
+
+# this serializer is for List API Key 
+class ListAPIKeySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = List_API_Key
+        fields = ['id','key', 'created_at', 'updated_at', 'is_active', 'name_service', 'description']
+        read_only_fields = ['key', 'created_at', 'updated_at', 'is_active']  # Make key read-only Specify only the fields to expose

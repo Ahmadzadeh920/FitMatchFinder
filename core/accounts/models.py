@@ -98,8 +98,8 @@ class List_API_Key(models.Model):
     key = models.CharField(max_length=255, unique=True, default= generate_uuid , blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)    
-    is_active = models.BooleanField(default=False)
-    name_service = models.CharField(max_length=255, blank=True)
+    is_active = models.BooleanField(default=True)
+    name_service = models.CharField(max_length=255, blank=False,)
     description = models.TextField(blank=True)
     def __str__(self):
         return self.key

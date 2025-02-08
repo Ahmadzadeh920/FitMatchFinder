@@ -1,6 +1,8 @@
 import os
 import jwt
 from django.conf import settings
+from django.utils import timezone
+
 from mail_templated import EmailMessage
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -17,10 +19,11 @@ from .serializer import ( RegistrationSerializer ,
                           ResetPasswordSerializer,
                           ChangePasswordSerializer,
                           ProfileSerializer,
+                          ListAPIKeySerializer
                           )
 
 from ...tasks import send_validation_email,  send_reset_password_email
-from ...models import CustomUser , PasswordReset
+from ...models import CustomUser , PasswordReset, List_API_Key
 from ...permissions import *
 
 def get_token_for_user(user):
@@ -199,3 +202,36 @@ class ProfileApiView(generics.RetrieveUpdateAPIView):
         queryset = self.get_queryset()
         obj = get_object_or_404(queryset, user=self.request.user)
         return obj
+    
+
+class ListCreatAPIKeyView(generics.ListCreateAPIView):
+    
+    serializer_class = ListAPIKeySerializer
+    permission_classes = [IsVerified,]
+
+    def get_queryset(self):
+        # Return only the API keys for the current user
+        return List_API_Key.objects.filter(profile__user=self.request.user)
+    def perform_create(self, serializer):
+        user = self.request.user
+        profile_obj= Profile.objects.filter(user=user).first()
+        if profile_obj:      # Set the profile to the current user
+            serializer.save(profile=profile_obj)
+            return Response({"detail": "This API for this application is created successfully"}, status=status.HTTP_200_OK)
+        else: 
+            return Response({"detail": "you must first complete your profile to access creation of API"}, status=status.HTTP_200_OK)
+
+class ListAPIKeyDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = List_API_Key.objects.all()
+    serializer_class = ListAPIKeySerializer
+    permission_classes = [IsVerified,]
+    def get_queryset(self):
+        # Return only the API keys for the current user
+        return List_API_Key.objects.filter(profile__user=self.request.user)
+    def perform_update(self, serializer):
+        # Update the updated_at field to the current timezone
+        profile_obj = Profile.objects.get(user=self.request.user)
+        serializer.save(updated_at=timezone.now(), profile=profile_obj)
+     
+    
+            

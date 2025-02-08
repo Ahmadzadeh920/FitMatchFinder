@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     "accounts",
+    "FashinClipRecommendation"
     
 ]
 
@@ -158,7 +159,7 @@ STATICFILES_DIRS = (
 )
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "mediafiles"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -215,6 +216,18 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
     
+}
+
+# Add ChromaDB URL to your settings
+CHROMA_SERVER_HOST = "chromadb"  # Service name in Docker Compose
+CHROMA_SERVER_PORT = 8000        # Port for ChromaDB
+
+
+# this settings of simple jwt
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=5),  # Change this to your desired duration
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # Optional: Set the refresh token lifetime
+  
 }
 
 
