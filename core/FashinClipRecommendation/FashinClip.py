@@ -24,14 +24,25 @@ class FashionImageRecommender:
 
         image = Image.open(full_image_path).convert("RGB")
         embedding = self.create_embedding(image).tolist()
-        print("embedding is " + str(embedding.shape))
-        collection = self.chroma_client.get_or_create_collection(name=self.collection_name) 
+        # Flatten the embedding to remove the extra dimension
+        embedding = embedding[0]  # Extract the first (and only) row to make it a 1D list
+        collection = self.chroma_client.get_or_create_collection(name=self.collection_name, metadata={"dimensionality": 512}) 
         image_ids = [str(id_img)]
+        print('embedding is '+str(np.array(embedding).shape))
         try:
-            collection.add(documents=[str(embedding)], ids=image_ids)  # Convert to a string representation
+        # Add the embedding to the collection
+            collection.add(
+                embeddings=[embedding],  # Pass the embedding as a list of floats
+                ids=image_ids  # Pass the ID as a list of strings
+            )
+            
             return True
         except Exception as e:
+          
             return False
+
+
+
 
     def create_embedding(self, image):
         """Generates an embedding for a given image."""
@@ -55,14 +66,14 @@ class FashionImageRecommender:
 # return the list includes all ids related to images in chromadb in the this collection
     def retrive_image(self):
         collection = self.chroma_client.get_collection(name=self.collection_name)
-        documents = collection.get(include=["documents"])  # Call get_all directly on the collection object\ 
+        documents = collection.get(include=["embeddings"])  # Call get_all directly on the collection object\ 
         ids_list= documents['ids']
-        doc_list = documents['documents']
+        doc_list = documents['embeddings']
         num_rows = len(doc_list)  # Number of top-level elements
         num_cols = len(doc_list[0]) if num_rows > 0 else 0  # Length of the first nested list
 
         shape = (num_rows, num_cols)
-        print("Shape of the list:", shape)
+        
        
         
         return ids_list
@@ -80,19 +91,34 @@ class FashionImageRecommender:
         print("prompt is" + str(description_embedding.shape))
         description_embedding = description_embedding.tolist()
         collection = self.chroma_client.get_collection(self.collection_name)
-        response= collection.get()
-        embedding_imgs = response["documents"]
-        ids_img = response["ids"]
-        #result = collection.query(query_embeddings = description_embedding,n_results=2) 
+        
+        result = collection.query(query_embeddings = description_embedding,n_results=2) 
+        # Extract distances and ids
+        distances = result['distances'][0]
+        ids = result['ids'][0]
+        
+        # Combine distances and ids into a list of tuples for sorting
+        combined = list(zip(distances, ids))
+        
+        # Sort the combined list by distances in decreasing order
+        sorted_combined = sorted(combined, key=lambda x: x[0], reverse=True)
+
+        # Separate the sorted distances and ids
+        sorted_distances, sorted_ids = zip(*sorted_combined)
+        # Limit the results to number_of_images
+        if len(sorted_ids) > number_of_images:
+            sorted_ids = sorted_ids[:number_of_images]
+            sorted_distances = sorted_distances[:number_of_images]
+
+        # Prepare the sorted result
+        sorted_result = {
+            "ids": list(sorted_ids),
+            "distances": list(sorted_distances),
+        }
+
+        return sorted_result
        
-        return response.keys()
-        '''
-        for i in range(number_of_images):
-        similarities = collection.query(description_embedding)
-        print(similarities)
-        # Sort and get the top recommendations
-        recommended_images = sorted(similarities, key=lambda x: x['similarity'], reverse=True)
-        return recommended_images[:number_of_images]  # Return top 5 recommendations'''
+        
 
 
     def create_description_embedding(self, description):

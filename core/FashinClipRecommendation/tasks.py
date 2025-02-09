@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 import logging
+from FashinClipRecommendation.models import ImageCollection
 
 logger = logging.getLogger(__name__)
 
@@ -49,9 +50,8 @@ def fashion_clip_retrieve(collection_name):
 def fashion_clip_recommeneder(collection_name, user_description, number_of_images):
     fashion_obj = FashionImageRecommender(collection_name=collection_name)
     recommendations = fashion_obj.recommend_images(user_description, number_of_images)
-   
-
     if recommendations:
+        
         return {"recommendations": recommendations}
     else:
         return {'status': 'error', 'message': 'this is not retrive any image id from chromadb.'}

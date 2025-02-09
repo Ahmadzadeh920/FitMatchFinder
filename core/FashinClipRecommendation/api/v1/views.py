@@ -202,8 +202,23 @@ class PromptAPIView(APIView):
             # Retrieve the result
             if result.successful():
                 result_recom = result.get()  # This should give you the actual result
-                return JsonResponse({"recommendations": result_recom}, status=200)
+                recommend_list = []
+                for i in range(0, len(result_recom["recommendations"]["ids"])):
+                   
+                    image = ImageCollection.objects.get(ImageID=result_recom["recommendations"]["ids"][i])
+                    recommend_image = {
+                        "id": image.ImageID,
+                        "image": image.Photo.url,
+                        "description": image.description,
+                        "name": image.name,
+                        "category": image.Category,
+                        "style": image.Styles,
+                        "distance": result_recom["recommendations"]["distances"][i]
+                    }
+    
+                    recommend_list.append(recommend_image)  
+                return Response({'recommend_list':recommend_list}, status=200)
             else:
-                return JsonResponse({"error": "Task failed", "details": str(result.result)}, status=500)
+                return Response({"error": "Task failed", "details": str(result.result)}, status=500)
         else:
-            return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.errors, status=400)
