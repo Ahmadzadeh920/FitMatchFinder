@@ -128,7 +128,7 @@ docker-compose up --build
 
 
 ###  API Endpoints
-
+```
 | Endpoint                           | Method              | Description                                      |
 |---------------------------|--------|------------------------------------------------- ----------------------|
 | `/images/<str:api_key>/`           | GET                  | List all images for the specified API key       |
@@ -136,7 +136,7 @@ docker-compose up --build
 | `/images/<str:api_key>/<int:pk>/`  | PUT , Delete, GET    |  Retrieve details of a specific image|          |
 | `/api/prompts/`                    | POST                 | Submit a prompt to obtain image recommendations |
 
-
+```
 ### Task Processing (Celery)
 Queues: queue_two (dedicated worker)
 
