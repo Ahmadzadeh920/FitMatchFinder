@@ -1,6 +1,6 @@
 # Fashion Recommendation Backend API (SAAS)
 
-A scalable backend service for clothing recommendation systems powered by Django REST API, Docker, and AI-driven embeddings. Designed for online shops to integrate fashion recommendation features via API keys.
+This project provides a Backend API for a clothing recommender system, designed for online shops. It is built using Django Rest Framework and leverages Docker Compose for deployment. The system uses a SaaS model, delivering API keys to clothing online shops, allowing them to create image collections and generate recommendations based on user prompts.
 
 ## Features
 
