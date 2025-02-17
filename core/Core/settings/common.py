@@ -57,7 +57,8 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     "accounts",
-    "FashinClipRecommendation"
+    "fashin_clip_recommendations",
+    "customized_RAG"
     
 ]
 

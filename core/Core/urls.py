@@ -46,7 +46,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
-    path("FashionClip/", include("FashinClipRecommendation.urls")),
+    path("FashionClip/", include("fashin_clip_recommendations.urls")),
+    path("CustomizedRAG/", include("customized_RAG.urls")),
 
     # This path for api  documentations
     path(

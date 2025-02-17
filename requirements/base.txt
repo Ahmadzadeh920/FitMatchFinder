@@ -72,3 +72,5 @@ torch
 torchvision
 transformers
 
+# for the RAG
+colivara_py
