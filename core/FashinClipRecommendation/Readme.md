@@ -19,7 +19,40 @@ This project provides a Backend API for a clothing recommender system, designed 
 - **Infrastructure**: Docker Compose
 
 ---
+## Code Structure
 
+The project is organized as follows:
+FitMatchFinder/
+├── core/
+│ ├── fashin_clip_recommendations/ # Core functionality for fashion recommendations
+│ │ ├── init.py
+│ │ ├── admin.py # Django admin configurations
+│ │ ├── apps.py # App configuration
+│ │ ├── models.py # Database models
+│ │ ├── serializers.py # DRF serializers
+│ │ ├── tasks.py # Celery tasks for async processing
+│ │ ├── urls.py # URL routing for the app
+│ │ ├── views.py # API views
+│ │ └── utils/ # Utility functions
+│ │ ├── clip_utils.py # CLIP model utilities
+│ │ ├── chromadb_utils.py # ChromaDB utilities
+│ │ └── image_processing.py # Image preprocessing utilities
+│ ├── init.py
+│ ├── asgi.py
+│ ├── settings.py # Django project settings
+│ ├── urls.py # Main URL routing
+│ └── wsgi.py
+├── docker-compose.yml # Docker Compose configuration
+├── Dockerfile # Dockerfile for the Django app
+├── requirements.txt # Python dependencies
+├── manage.py # Django management script
+└── README.md # Project documentation
+
+Copy
+
+You can explore the code in the [fashin_clip_recommendations](https://github.com/Ahmadzadeh920/FitMatchFinder/tree/main/core/fashin_clip_recommendations) directory.
+
+---
 ## Database Schema
 
 ### Entities
