@@ -1,164 +1,159 @@
-Clothing Online Shop Recommender System - Backend API
+# Fashion Recommendation Backend API (SAAS)
 
-This project provides a Backend API for a clothing online shop recommender system. It is built using Django Rest Framework and leverages Docker Compose for deployment. The system uses the FashionCLIP model to generate embeddings for images and text, which are stored and queried using ChromaDB. The system is designed as a SaaS platform, delivering API keys to clothing online shops, allowing them to create image collections and get recommendations based on user prompts.
+This project provides a Backend API for a clothing recommender system, designed for online shops. It is built using Django Rest Framework and leverages Docker Compose for deployment. The system uses a SaaS model, delivering API keys to clothing online shops, allowing them to create image collections and generate recommendations based on user prompts.
 
-Features
-Image Collection Management: Online shops can create and manage image collections using the ImageCollection model.
+## Features
 
-Embedding Generation: Images are processed using the FashionCLIP model to generate embeddings, which are stored in ChromaDB.
+- **SAAS Architecture**: Multi-tenant API key management for clothing shops.
+- **Image & Text Embeddings**: CLIP model generates vectors for images/prompts.
+- **Vector Database**: ChromaDB stores embeddings (collections = API keys).
+- **Async Processing**: Celery workers handle embedding generation.
+- **Dockerized**: Fully containerized with PostgreSQL, Redis, ChromaDB, and pgAdmin.
 
-Text-to-Image Recommendations: Users can enter a text prompt (e.g., "red dress with floral patterns"), and the system will return relevant images from the collection.
+## Tech Stack
 
-Celery Workers: All image processing and embedding tasks are handled asynchronously using Celery workers.
+- **Backend**: Django REST Framework
+- **AI Model**: `patrickjohncyh/fashion-clip` (CLIP for fashion)
+- **Database**: PostgreSQL (relational data), ChromaDB (vector storage)
+- **Queue**: Redis + Celery
+- **Infrastructure**: Docker Compose
 
-Dockerized Deployment: The entire system is containerized using Docker Compose for easy deployment and scalability.
+---
 
-Database Diagram
-Below is the database diagram for the models used in this application:
+## Database Schema
 
-plaintext
-Copy
-+-------------------+       +-------------------+       +-------------------+
-|    Category       |       |      Styles       |       |     AgeGroup      |
-+-------------------+       +-------------------+       +-------------------+
-| CategoryId (PK)   |       | StyleId (PK)      |       | AgeGroupId (PK)   |
-| name              |       | name              |       | name              |
-| description       |       | description       |       | description       |
-+-------------------+       +-------------------+       +-------------------+
-        |                         |                         |
-        |                         |                         |
-        |                         |                         |
-        |                         |                         |
-        |                         |                         |
-+-------------------+       +-------------------+       +-------------------+
-|  ImageCollection  |       |   List_API_Key    |       |   Prompt_API      |
-+-------------------+       +-------------------+       +-------------------+
-| ImageID (PK)      |       | APIKey (PK)       |       | PromptID (PK)     |
-| APIKey (FK)       |<------| key               |       | APIKey (FK)       |
-| Photo             |       +-------------------+       | prompt            |
-| name              |                                  | num_recommended   |
-| description       |                                  +-------------------+
-| Category (FK)     |
-| Styles (FK)       |
-| AgeGroup (FK)     |
-| Processor_embedded|
-+-------------------+
-Setup Instructions
-Prerequisites
-Docker and Docker Compose installed on your machine.
+### Entities
+```plainText
+├── Category
+│   ├─ CategoryId (PK)
+│   ├─ name
+│   └─ description
+│
+├── Styles
+│   ├─ StyleId (PK)
+│   ├─ name
+│   └─ description
+│
+├── AgeGroup
+│   ├─ AgeGroupId (PK)
+│   ├─ name
+│   └─ description
+│
+├── ImageCollection (Core)
+│   ├─ ImageID (PK)
+│   ├─ APIKey (FK → List_API_Key)
+│   ├─ Photo (uploaded to /Photo_collection/{api_key}/)
+│   ├─ Processor_embedded (boolean)
+│   ├─ ForeignKeys: Category, Styles, AgeGroup
+│
+└── Prompt_API
+    ├─ PromptID (PK)
+    ├─ APIKey (FK → List_API_Key)
+    ├─ prompt (text)
+    └─ number_recommended_images
 
-Python 3.8 or higher.
+ 
 
-Steps to Run the Application
-Clone the Repository:
+ ```
 
-bash
-Copy
-git clone <repository-url>
-cd <repository-folder>
-Set Up Environment Variables:
-Create a .env file in the root directory and add the following variables:
 
-plaintext
-Copy
-DB_NAME=your_db_name
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-PGADMIN_DEFAULT_EMAIL=your_email
-PGADMIN_DEFAULT_PASSWORD=your_password
-Build and Run the Docker Containers:
+---
+## Workflow
+### Shop Registration
+   Shops obtain an API key 
 
-bash
-Copy
+### Image Collection Upload
+  Upload all images  they want to recommend to users .
+  
+  ```POST /api/images/
+      Body: { "photo": File, "api_key": "shop_123", name : "name of photo" }
+  ```
+
+
+### Embedding Generation
+for every image we must create embedding vector and store in chromadb. the collection name in chromadb is equal to API Key of online shops 
+
+Resizes image → generates CLIP embedding → stores in ChromaDB.
+
+### Recommendation Query
+When users in online shops want to yser recommender systems , they enter prompt and the number of images they want to recommend.
+```GET /api/recommend/
+Body: { "prompt": "summer dress", "api_key": "shop_123", "num_results": 5 }
+
+```
+
+
+## Infrastructure Diagram
+```graph TD
+  A[Django Backend] -->|Stores Metadata| B[(PostgreSQL)]
+  A -->|Async Tasks| C[Redis]
+  C -->|queue_two| D[Celery Worker]
+  D -->|CLIP Model| E[(ChromaDB)]
+  A -->|Query Embeddings| E
+  E -->|API Key = Collection| A
+  ```
+
+## Getting Started
+### Prerequisites
+```
+Docker
+Python 3.9+
+```
+### Setup
+
+#### Clone the repository
+```bash
+git clone https://github.com/yourusername/FitMatchFinder.git
+```
+
+#### Create .env file:
+```bash
+DB_NAME=postgres
+DB_USER=postgres
+DB_PASSWORD=your_password
+PGADMIN_DEFAULT_EMAIL=admin@example.com
+PGADMIN_DEFAULT_PASSWORD=admin
+```
+#### Run
+```bash
 docker-compose up --build
-Access the Services:
+```
+### Access services:
 
-Django Backend: http://localhost:8000
+- Django API: http://localhost:8000
+- pgAdmin: http://localhost:5050
+- ChromaDB: http://chromadb:8001
 
-PostgreSQL Database: localhost:5432
 
-PgAdmin: http://localhost:5050
 
-Redis: localhost:6379
 
-ChromaDB: localhost:8001
+###  API Endpoints
+```
+| Endpoint                           | Method              | Description                                      |
+|---------------------------|--------|------------------------------------------------- ----------------------|
+| `/images/<str:api_key>/`           | GET                  | List all images for the specified API key       |
+| `/images/<str:api_key>/`           | POST                 | Upload image + trigger embedding task           |
+| `/images/<str:api_key>/<int:pk>/`  | PUT , Delete, GET    |  Retrieve details of a specific image|          |
+| `/api/prompts/`                    | POST                 | Submit a prompt to obtain image recommendations |
 
-SMTP4Dev: http://localhost:5000
+```
+### Task Processing (Celery)
+Queues: queue_two (dedicated worker)
 
-Run Celery Workers:
-The Celery workers are already configured to run with the Docker Compose setup. You can monitor the workers using the logs.
+#### Tasks:
 
-API Endpoints
-Image Collection Management
-Create Image Collection:
+- CreateEmbedding: Image → CLIP → ChromaDB
 
-Endpoint: POST /api/image-collection/
+- DeleteEmbedding: Remove embeddings on image delete (when online shops remove or finish these clothes from the online shops so these clothes do not recommend to customers in online shops )
 
-Description: Create a new image collection.
+- Fashion_clip_recommender: Handle recommendation queries (for giving recommend to customers )
 
-Request Body:
+Monitor tasks via Flower or Django admin.
 
-json
-Copy
-{
-  "APIKey": "your_api_key",
-  "Photo": "image_file",
-  "name": "Image Name",
-  "description": "Image Description",
-  "Category": 1,
-  "Styles": 1,
-  "AgeGroup": 1
-}
-Get Image Collection:
 
-Endpoint: GET /api/image-collection/<image_id>/
+### Contributing
+Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
 
-Description: Retrieve details of a specific image collection.
-
-Text-to-Image Recommendations
-Get Recommendations:
-
-Endpoint: POST /api/recommendations/
-
-Description: Get image recommendations based on a text prompt.
-
-Request Body:
-
-json
-Copy
-{
-  "api_key": "your_api_key",
-  "prompt": "A red dress with floral patterns",
-  "number_of_images": 5
-}
-Celery Tasks
-The following Celery tasks are available for asynchronous processing:
-
-CreateEmbedding: Generates embeddings for images and stores them in ChromaDB.
-
-DeleteEmbedding: Deletes embeddings from ChromaDB.
-
-RetrieveImageIds: Retrieves all image IDs from a specific collection in ChromaDB.
-
-FashionClipRecommender: Provides image recommendations based on a text prompt.
-
-Technologies Used
-Django: Backend framework for building the API.
-
-Django Rest Framework: For building RESTful APIs.
-
-PostgreSQL: Database for storing application data.
-
-Redis: Message broker for Celery tasks.
-
-ChromaDB: Vector database for storing image embeddings.
-
-Docker: Containerization for easy deployment.
-
-Celery: Asynchronous task queue for processing image embeddings.
-
-Contributing
-Contributions are welcome! Please fork the repository and submit a pull request with your changes.
-
-License
+### License
 This project is licensed under the MIT License. See the LICENSE file for details.
+
