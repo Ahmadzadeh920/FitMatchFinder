@@ -42,6 +42,7 @@ drf-yasg[validation]
 sphinx
 sphinx-autobuild
 sphinx-rtd-theme
+sphinxcontrib-django
 
 #email third party
 django-mail-templated

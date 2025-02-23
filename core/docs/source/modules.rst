@@ -10,7 +10,8 @@ Welcome to FitFinder's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+   accounts
+   fashin_clip_recommendations
 
 Indices and tables
 ==================
