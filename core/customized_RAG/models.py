@@ -28,6 +28,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     manual = models.FileField(upload_to=get_upload_path )
+    
 
     def __str__(self):
         return self.name

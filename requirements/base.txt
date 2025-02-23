@@ -39,6 +39,9 @@ pytest-django
 coreapi
 drf-yasg
 drf-yasg[validation]
+sphinx
+sphinx-autobuild
+sphinx-rtd-theme
 
 #email third party
 django-mail-templated

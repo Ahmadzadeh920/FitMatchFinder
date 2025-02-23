@@ -1,0 +1,6 @@
+.. accounts:: accounts.models
+   :members:
+
+
+.. fashion_clip_recommendations:: fashion_clip_recommendations.models
+   :members:
