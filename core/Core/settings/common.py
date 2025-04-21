@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
     "drf_yasg",
+    "drf_spectacular",
     "rest_framework_simplejwt.token_blacklist",
     "django_celery_beat",
     "django_celery_results",
@@ -207,18 +208,25 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 # Rest_Framework settings
 
 REST_FRAMEWORK = {
-    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",  # this is for coreapi for documentations of api versions
+    # Use drf-spectacular for schema generation
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-
     ],
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
     ],
-    
 }
 
+# Optional: Configure drf-spectacular settings
+SPECTACULAR_SETTINGS = {
+    "TITLE": "FitMatchFinder",
+    "DESCRIPTION": "API documentation for FitMatchFinder",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # Other settings: https://drf-spectacular.readthedocs.io/en/latest/settings.html
+}
 # Add ChromaDB URL to your settings
 CHROMA_SERVER_HOST = "chromadb"  # Service name in Docker Compose
 CHROMA_SERVER_PORT = 8000        # Port for ChromaDB

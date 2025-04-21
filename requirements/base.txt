@@ -14,8 +14,7 @@ streamlit # to interact with chromadb
 
 
 
-# environmental variables
-python-dotenv
+
 
 # third party modules
 djangorestframework
@@ -29,20 +28,22 @@ django-cors-headers
 djangorestframework-simplejwt
 
 # refactoring
-flake8
-black
-pytest
 pytest-django
 
-
+ 
 # documentations
 coreapi
 drf-yasg
 drf-yasg[validation]
+drf-spectacular ###
 sphinx
+sphinxcontrib-openapi
+sphinx-view
+sphinxcontrib-napoleon
+autoapi
+sphinxcontrib-redoc
+sphinx_rtd_theme
 sphinx-autobuild
-sphinx-rtd-theme
-sphinxcontrib-django
 
 #email third party
 django-mail-templated
@@ -62,19 +63,4 @@ celery
 Redis
 django-celery-beat # for bothe backend and worker  
 django-redis # for bothe backend and worker 
-django-celery-results 
-
-
-# Using Models in openAI
-openai
-langchain
-langchain-community
-
-
-# huggingface
-torch
-torchvision
-transformers
-
-# for the RAG
-colivara_py
+django-celery-results

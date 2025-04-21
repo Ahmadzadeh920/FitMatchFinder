@@ -1,7 +1,7 @@
 from PIL import Image
 import requests
-from transformers import CLIPProcessor, CLIPModel
-import torch
+#from transformers import CLIPProcessor, CLIPModel
+#import torch
 import numpy as np
 import chromadb
 from chromadb.config import Settings

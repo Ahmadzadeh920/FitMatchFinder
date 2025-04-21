@@ -31,4 +31,16 @@ app.conf.beat_schedule = {
         'schedule': timedelta(seconds=7),  # Run every 3 seconds
         
     },
+
+    'preprocess-doc-task': {
+        'task': 'Processsing_docs',
+        'schedule': timedelta(seconds=7),  # Run every 3 seconds
+        
+    },
+
+    'delete-doc-task': {
+        'task': 'Delete_doc',
+        'schedule': timedelta(seconds=7),  # Run every 3 seconds
+        
+    },
 }

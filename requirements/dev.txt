@@ -1,1 +1,10 @@
+# dev.txt
 -r base.txt
+-r llm-requirements.txt
+
+# Development-only packages
+sphinx-autobuild
+python-dotenv
+flake8
+black
+pytest

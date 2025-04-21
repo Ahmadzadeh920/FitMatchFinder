@@ -6,3 +6,4 @@ Modules
 
    accounts
    fashin_clip_recommendations
+   document_api

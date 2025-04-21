@@ -93,7 +93,7 @@ class Profile(models.Model):
 class List_API_Key(models.Model):
     def generate_uuid():
         return str(uuid.uuid5(uuid.NAMESPACE_OID, datetime.now().isoformat()))
-    
+    id = models.AutoField(primary_key=True)
     profile = models.ForeignKey(Profile, related_name="Profle", on_delete=models.CASCADE)
     key = models.CharField(max_length=255, unique=True, default= generate_uuid , blank=False)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -1,4 +1,4 @@
-FROM python:3.8-slim-buster
+FROM python:3.11-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -30,5 +30,13 @@ WORKDIR /app
 COPY ./requirements /app/requirements
 
 # Upgrade pip and install requirements
-RUN pip install --upgrade pip
-RUN python3 -m pip install -r requirements/dev.txt
+RUN pip install --upgrade pip && \
+    pip install --default-timeout=1000 --no-cache-dir -r requirements/dev.txt
+# Copies local `docs` directory into the container's `/app/docs`
+
+COPY ./core/docs /app/docs  
+
+# -----------------------------------------------
+# Add the Sphinx build command
+# -----------------------------------------------
+CMD ["sphinx-build", "-b", "html", "docs/source", "docs/build"]

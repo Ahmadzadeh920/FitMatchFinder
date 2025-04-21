@@ -1,0 +1,12 @@
+# llm-requirements.txt
+openai
+#torch==2.1.2 --index-url https://download.pytorch.org/whl/cpu
+transformers
+langchain
+langchain-community
+pyasn1>=0.6.1
+#torchvision
+
+
+# for the RAG
+colivara_py 
