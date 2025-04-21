@@ -1,3 +1,23 @@
+<div align="center">
+<h1 align="center"Fashion Recommendation System (SAAS)</h1>
+<h3 align="center">Sample Project with base usage and deployment</h3>
+</div>
+<p align="center">
+<a href="https://www.python.org" target="_blank"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> </a>
+<a href="https://www.docker.com/" target="_blank"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original-wordmark.svg" alt="docker" width="40" height="40"/> </a>
+<a href="https://www.django-rest-framework.org/" target="_blank"> <img src="https://img.icons8.com/?size=100&id=xeyzFtrzVyPM&format=png&color=000000" alt="rest-framework" width="40" height="40"/> </a>
+<a href="https://redis.io/" target="_blank"> <img src="https://img.icons8.com/?size=100&id=FMw01QDk8Qlu&format=png&color=000000" alt="redis" width="40" height="40"/> </a>
+<a href="https://docs.celeryq.dev/en/stable//" target="_blank"> <img src="https://docs.celeryq.dev/en/stable/_static/celery_512.png" alt="celery" width="40" height="40"/> </a>
+<a href="https://www.postgresql.org/" target="_blank"> <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNIa2GjsExd_GZmrCCI1G2ZJ6rGLQZoMa4WA&s" alt="Postgresql" width="40" height="40"/> </a>
+<a href="https://huggingface.co/" target="_blank"> <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" alt="huggingface" width="40" height="40"/> </a>
+<a href="https://en.wikipedia.org/wiki/Recommender_system" target="_blank"> <img src="https://static.vecteezy.com/system/resources/previews/026/226/891/non_2x/recommendation-engine-icon-illustration-vector.jpg" alt="Recommender_system" width="40" height="40"/> </a>
+<a href=https://en.wikipedia.org/wiki/Machine_learning" target="_blank"> <img src="https://img.freepik.com/premium-vector/ai-generate-icon-machine-learning-micropchip-symbol-ml-icon-artificial-intelligence-sign-vector_246263-31.jpg" alt="Machine learning" width="40" height="40"/> </a>
+<a href="https://www.trychroma.com/" target="_blank"> <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSny5rpw45p_mya_So_dqeY-AJDQdNO-ZCu4w&s" alt="Chromadb" width="40" height="40"/> </a>
+
+
+
+</p>
+
 # Fashion Recommendation Backend API (SAAS)
 
 This project provides a Backend API for a clothing recommender system, designed for online shops. It is built using Django Rest Framework and leverages Docker Compose for deployment. The system uses a SaaS model, delivering API keys to clothing online shops, allowing them to create image collections and generate recommendations based on user prompts.
