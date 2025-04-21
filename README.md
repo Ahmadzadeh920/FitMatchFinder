@@ -27,7 +27,7 @@ A flexible authentication system that can be customized for different e-commerce
 ### 2. FashinClip Recommendation
 Backend API for a sophisticated clothing recommender system using machine learning.
 
-🔗 [View Details](https://github.com/Ahmadzadeh920/FitMatchFinder/tree/main/core/FashinClipRecommendation)
+🔗 [View Details](https://github.com/Ahmadzadeh920/FitMatchFinder/tree/main/core/fashin_clip_recommendations)
 
 ### 3. Customized RAG Pipeline
 Backend API chat system for analyzing online shop catalog documents (PDFs) with enhanced performance using OpenAI and Colivara implementations.
