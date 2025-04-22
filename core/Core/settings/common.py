@@ -240,7 +240,8 @@ SIMPLE_JWT = {
 }
 
 
-
+# for setting up test
+TEST_RUNNER = 'django.test.runner.DiscoverRunner' 
 
 
 
