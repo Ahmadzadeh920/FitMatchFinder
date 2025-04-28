@@ -1,5 +1,6 @@
 from customized_RAG.models import Product, Query
 from rest_framework import serializers
+from accounts.models import List_API_Key
 
 
 
@@ -21,6 +22,7 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
         }
         
 class QuerySerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Query
         fields = ['id', 'query_text', 'response_image', 'created_at']

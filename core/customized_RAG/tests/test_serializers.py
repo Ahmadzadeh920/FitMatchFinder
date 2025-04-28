@@ -187,3 +187,46 @@ class ProductUpdateSerializerTest(TestCase):
         )
         self.assertFalse(serializer.is_valid())
         self.assertIn('name_file', serializer.errors)
+
+
+
+class QuerySerializerTest(TestCase):
+    def setUp(self):
+        # Create a user
+        user_obj = CustomUser.objects.create_user(email='testuser5@example.com', password='Password$123', is_verified=True, is_active=True)
+        # Create a profile for that user
+        profile_obj, created = Profile.objects.get_or_create(
+            user=user_obj,
+            defaults={
+                'first_name': 'Test_5',
+                'last_name': 'User5',
+                'phone_number': '123452678903'
+            }
+        )
+            
+    
+    # Create List_API_Key linked to profile
+        self.api_key_obj = List_API_Key.objects.create(
+            profile=profile_obj,
+            name_service='Test Service',
+            description='Test description'
+        )
+
+        self.query_data = {
+            'query_text': 'Test query',
+            'response_image': SimpleUploadedFile(image_path_file, b"image_content"),
+            'APIKey': self.api_key_obj.id  # Pass the primary key
+           
+        }
+
+    def test_query_serializer_valid_data(self):
+        serializer = QuerySerializer(data=self.query_data)
+        if not serializer.is_valid():
+            print(serializer.errors)  # For debugging
+        self.assertTrue(serializer.is_valid())
+        
+        
+        query = serializer.save()
+        self.assertEqual(query.query_text, 'Test query')
+        self.assertTrue(query.response_image.name.endswith('test.jpg'))
+        self.assertIsNotNone(query.created_at)
