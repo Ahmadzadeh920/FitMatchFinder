@@ -14,7 +14,8 @@ import datetime
 
 
 path_file="https://github.com/Ahmadzadeh920/FitMatchFinder/blob/main/core/customized_RAG/tests/test_docs/test_catalogue.pdf"
-updated_path_file="https://github.com/Ahmadzadeh920/FitMatchFinder/blob/main/core/customized_RAG/tests/test_docs/test_catalogue.pdf"
+updated_path_file="https://github.com/Ahmadzadeh920/FitMatchFinder/blob/main/core/customized_RAG/tests/test_docs/updated_catalogue.pdf"
+image_path_file="https://github.com/Ahmadzadeh920/FitMatchFinder/blob/main/core/customized_RAG/tests/test_docs/responce_example.png"
 
 
 class ProductSerializerTest(TestCase):
@@ -132,7 +133,7 @@ class ProductUpdateSerializerTest(TestCase):
             description='Original Description',
             manual_file=SimpleUploadedFile(path_file, b"original_content"),
             Processing_boolean=False,
-            APIKey =self.api_key_obj.id  # Assuming you want to set the APIKey here
+            APIKey =self.api_key_obj  # Assuming you want to set the APIKey here
         )
         self.update_data = {
             'name_file': 'Updated Name',
@@ -140,3 +141,49 @@ class ProductUpdateSerializerTest(TestCase):
             'manual_file': SimpleUploadedFile(updated_path_file, b"updated_content"),
             'Processing_boolean': True
         }
+
+    def test_product_update_serializer_partial_update(self):
+        # Test that fields can be updated individually
+        serializer = ProductUpdateSerializer(
+            instance=self.product,
+            data={'name_file': 'Partial Update'},
+            partial=True
+        )
+        self.assertTrue(serializer.is_valid())
+        updated_product = serializer.save()
+        self.assertEqual(updated_product.name_file, 'Partial Update')
+        self.assertEqual(updated_product.description, 'Original Description')  # unchanged
+
+    def test_product_update_serializer_all_fields_optional(self):
+        # Test that all fields are optional
+        for field in ['name_file', 'description', 'manual_file', 'Processing_boolean']:
+            serializer = ProductUpdateSerializer(
+                instance=self.product,
+                data={},
+                partial=True
+            )
+            self.assertTrue(serializer.is_valid())
+
+    def test_product_update_serializer_full_update(self):
+        serializer = ProductUpdateSerializer(
+            instance=self.product,
+            data=self.update_data
+        )
+        self.assertTrue(serializer.is_valid())
+        updated_product = serializer.save()
+        
+        self.assertEqual(updated_product.name_file, 'Updated Name')
+        self.assertEqual(updated_product.description, 'Updated Description')
+        self.assertTrue(updated_product.manual_file.name.endswith('updated_catalogue.pdf'))
+        self.assertEqual(updated_product.Processing_boolean, True)
+
+    def test_product_update_serializer_max_length(self):
+        # Test name_file max length enforcement
+        invalid_data = self.update_data.copy()
+        invalid_data['name_file'] = 'ass' * 100
+        serializer = ProductUpdateSerializer(
+            instance=self.product,
+            data=invalid_data
+        )
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('name_file', serializer.errors)
