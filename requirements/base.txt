@@ -27,8 +27,12 @@ django-cors-headers
 # Authorization
 djangorestframework-simplejwt
 
-# refactoring
+# refactoring and testing
+pytest 
 pytest-django
+pytest-cov
+factory-boy
+pytest-mock
 
  
 # documentations

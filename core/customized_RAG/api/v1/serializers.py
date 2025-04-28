@@ -1,4 +1,4 @@
-from ...models import Product, Query
+from customized_RAG.models import Product, Query
 from rest_framework import serializers
 
 
