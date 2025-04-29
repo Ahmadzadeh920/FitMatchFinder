@@ -111,9 +111,9 @@ docker-compose exec backend sh -c "python manage.py test customized_RAG.tests"
 Caching and workers : Redis caches frequent queries and embeddings and celery workers for processing these file in Colivara
 
 ### Data Flow
-```markdown
+
 ![Workflow Diagram](structure.png)
-```
+
 ### File Structure
 ```markdown
 
