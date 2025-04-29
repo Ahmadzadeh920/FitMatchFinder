@@ -10,6 +10,7 @@ A SaaS platform that enables online shops to upload product catalogs and documen
 
 - **Multi-tenant API Key System**: Each online shop gets a unique API key
 - **Document Processing Pipeline**: Automated processing of uploaded PDFs/manuals
+- **Upsert Documents on colivara**: Update Or Add documents to special collection name
 - **AI-Powered Q&A**: RAG (Retrieval-Augmented Generation) system using OpenAI's GPT models
 - **Scalable Architecture**: Celery workers for background processing, Redis for caching
 - **Self-Service Portal**: API key management and analytics for shop owners
@@ -97,11 +98,11 @@ docker-compose exec backend sh -c "python manage.py test customized_RAG.tests"
 
 - Background processing via Celery workers
 
-- Text extraction and visual embedding generation via Colivara   
+- Upsert documets of online shops 
         
 3- Query Processing:
 
-- Question generation and transform_query using OpenAI GPT
+- transform query using OpenAI GPT
 
 - Run RAG pipline by seraching in special collection name(API key) on Colivara
 
