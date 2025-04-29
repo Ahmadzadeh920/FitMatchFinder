@@ -11,12 +11,24 @@ from customized_RAG.api.v1.serializers import (
 from django.core.files.uploadedfile import SimpleUploadedFile
 import tempfile
 import datetime
+from PIL import Image
+from io import BytesIO
 
 
 path_file="https://github.com/Ahmadzadeh920/FitMatchFinder/blob/main/core/customized_RAG/tests/test_docs/test_catalogue.pdf"
 updated_path_file="https://github.com/Ahmadzadeh920/FitMatchFinder/blob/main/core/customized_RAG/tests/test_docs/updated_catalogue.pdf"
 image_path_file="https://github.com/Ahmadzadeh920/FitMatchFinder/blob/main/core/customized_RAG/tests/test_docs/responce_example.png"
-
+# Create a small red square image
+def get_test_image():
+    image = Image.new('RGB', (10, 10), color='red')
+    thumb_io = BytesIO()
+    image.save(thumb_io, format='PNG')
+    thumb_io.seek(0)
+    return SimpleUploadedFile(
+        'test.png',  # filename
+        thumb_io.read(),
+        content_type='image/png'
+    )
 
 class ProductSerializerTest(TestCase):
     def setUp(self):
@@ -46,7 +58,7 @@ class ProductSerializerTest(TestCase):
             'description': 'This is a test product',
             'manual_file': SimpleUploadedFile(path_file, b"file_content"),
             'Processing_boolean': False,
-            'APIKey': self.api_key_obj.id  # Assuming you want to set the APIKey here
+            
         }
 
 
@@ -193,13 +205,13 @@ class ProductUpdateSerializerTest(TestCase):
 class QuerySerializerTest(TestCase):
     def setUp(self):
         # Create a user
-        user_obj = CustomUser.objects.create_user(email='testuser5@example.com', password='Password$123', is_verified=True, is_active=True)
+        user_obj = CustomUser.objects.create_user(email='testuser3@example.com', password='Password$123', is_verified=True, is_active=True)
         # Create a profile for that user
         profile_obj, created = Profile.objects.get_or_create(
             user=user_obj,
             defaults={
-                'first_name': 'Test_5',
-                'last_name': 'User5',
+                'first_name': 'Test_3',
+                'last_name': 'User3',
                 'phone_number': '123452678903'
             }
         )
@@ -214,19 +226,59 @@ class QuerySerializerTest(TestCase):
 
         self.query_data = {
             'query_text': 'Test query',
-            'response_image': SimpleUploadedFile(image_path_file, b"image_content"),
-            'APIKey': self.api_key_obj.id  # Pass the primary key
+            'response_image': get_test_image(),
+            
            
         }
 
     def test_query_serializer_valid_data(self):
-        serializer = QuerySerializer(data=self.query_data)
-        if not serializer.is_valid():
-            print(serializer.errors)  # For debugging
+       serializer =  QuerySerializer(data=self.query_data)
+       self.assertTrue(serializer.is_valid())
+       serializer.validated_data['APIKey']= self.api_key_obj
+       query = serializer.save()
+       self.assertEqual(query.query_text, 'Test query')
+       self.assertTrue(query.response_image.name.endswith('test.png'))
+       self.assertIsNotNone(query.created_at)
+
+    def test_query_serializer_missing_query_text(self):
+        # query_text is required
+        invalid_data = self.query_data.copy()
+        invalid_data.pop('query_text')
+        serializer = QuerySerializer(data=invalid_data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('query_text', serializer.errors)
+
+    def test_query_serializer_missing_response_image(self):
+        # response_image is optional
+        valid_data = self.query_data.copy()
+        valid_data.pop('response_image')
+        serializer = QuerySerializer(data=valid_data)
         self.assertTrue(serializer.is_valid())
-        
-        
+        serializer.validated_data['APIKey']= self.api_key_obj
         query = serializer.save()
         self.assertEqual(query.query_text, 'Test query')
-        self.assertTrue(query.response_image.name.endswith('test.jpg'))
-        self.assertIsNotNone(query.created_at)
+        self.assertEqual(query.response_image, None)
+    def test_query_serializer_created_at_not_editable(self):
+        # Test that created_at can't be set via serializer
+        custom_time = datetime.datetime(2023, 1, 1, 0, 0, 0)
+        data = self.query_data.copy()
+        data['created_at'] = custom_time
+        serializer = QuerySerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        serializer.validated_data['APIKey']= self.api_key_obj
+        query = serializer.save()
+        self.assertNotEqual(query.created_at, custom_time)
+
+
+    def test_query_serializer_output(self):
+        query = Query.objects.create(
+            query_text='Output test',
+            response_image= get_test_image(),
+            APIKey= self.api_key_obj,
+        )
+        serializer = QuerySerializer(query)
+        expected_fields = ['id', 'query_text', 'response_image', 'created_at']
+        self.assertEqual(set(serializer.data.keys()), set(expected_fields))
+        self.assertEqual(serializer.data['query_text'], 'Output test')
+        self.assertTrue(serializer.data['response_image'].endswith('test.png'))
+        self.assertIsNotNone(serializer.data['created_at'])
