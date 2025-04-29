@@ -112,7 +112,7 @@ Caching and workers : Redis caches frequent queries and embeddings and celery wo
 
 ### Data Flow
 ```markdown
-![Workflow Diagram](./images/workflow.png)
+![Workflow Diagram](structure.png)
 ```
 ### File Structure
 ```markdown
