@@ -12,17 +12,10 @@ def validate_pdf(value):
 
 def get_upload_path(instance, filename):
     try:
-        api_key = instance.APIKey.key
+        api_key = instance.API_Key.key
     except Exception:  # Catches both DoesNotExist and None cases
         api_key = 'no_api_key'
-    '''
-    id = instance.id
-    base_filename, file_extension = os.path.splitext(filename)
-    max_length = 100
-    safe_base_filename = base_filename[:max_length - len(file_extension) - len(str(id)) - 1]
     
-    return os.path.join('manual_collection', api_key, f"{safe_base_filename}{file_extension}")
-'''
     return os.path.join('Refrence_AI_chat_bot', api_key, filename)
 
 
