@@ -53,13 +53,15 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
     "drf_yasg",
+    "django_filters",
     "drf_spectacular",
     "rest_framework_simplejwt.token_blacklist",
     "django_celery_beat",
     "django_celery_results",
     "accounts",
     "fashin_clip_recommendations",
-    "customized_RAG"
+    "customized_RAG",
+    "AI_chat_bot",
     
 ]
 
@@ -209,11 +211,11 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 
 REST_FRAMEWORK = {
     # Use drf-spectacular for schema generation
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+   # 'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+   # "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ],
@@ -225,6 +227,8 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API documentation for FitMatchFinder",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'VALIDATOR_MUTATIONS': True,
     # Other settings: https://drf-spectacular.readthedocs.io/en/latest/settings.html
 }
 # Add ChromaDB URL to your settings

@@ -37,7 +37,7 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     path("FashionClip/", include("fashin_clip_recommendations.urls")),
     path("CustomizedRAG/", include("customized_RAG.urls")),
-
+    path("AIChatBot/", include("AI_chat_bot.urls")),
     # This path for api  documentations
     # Schema endpoints
   

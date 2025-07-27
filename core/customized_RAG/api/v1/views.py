@@ -42,7 +42,7 @@ class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer
 
     def get_serializer_class(self):
-        if self.request.method in ['PUT', 'PATCH']:
+        if self.request and self.request.method in ['PUT', 'PATCH']:
             return ProductUpdateSerializer  # Use the update serializer for PATCH/PUT
         return super().get_serializer_class()  # Default for GET/DELETE
     def get_object(self):
