@@ -9,7 +9,7 @@ class ReferenceSerializer(serializers.ModelSerializer):
     def validate_reference_doc(self, file):
         if not file.name.lower().endswith('.pdf'):
             raise serializers.ValidationError("Only PDF files are allowed.")
-        return file.name
+        return file
     
 
 

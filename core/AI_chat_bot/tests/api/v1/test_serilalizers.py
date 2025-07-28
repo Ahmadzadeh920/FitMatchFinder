@@ -9,19 +9,39 @@ from AI_chat_bot.api.v1.serializers import ReferenceSerializer, ChatBotQASeriali
 
 class ReferenceSerializerTest(TestCase):
     def setUp(self):
-        user = CustomUser.objects.create_user(email='testuser@example.com', password='Password$123', is_verified=True)
-        profile = Profile.objects.create(user=user, first_name='Test', last_name='User', phone_number='1234567890')
-        self.api_key = List_API_Key.objects.create(profile=profile, name_service="Test", description="Test")
+       # Create a user
+        user_obj = CustomUser.objects.create_user(email='testuser1@example.com', password='Password$123', is_verified=True, is_active=True)
+        # Create a profile for that user
+        profile_obj, created = Profile.objects.get_or_create(
+            user=user_obj,
+            defaults={
+                'first_name': 'Test',
+                'last_name': 'User',
+                'phone_number': '12341567890'
+            }
+        )
+            
+    
+    
+    # Create List_API_Key linked to profile
+        self.api_key= List_API_Key.objects.create(
+            profile=profile_obj,
+            name_service='Test Service',
+            description='Test description'
+        )
+        path_file_pdf="https://github.com/Ahmadzadeh920/FitMatchFinder/blob/main/core/AI_chat_bot/tests/test_docs/test_catalogue.pdf"
+        self.test_file = SimpleUploadedFile(path_file_pdf, b"file_content", content_type="application/pdf") 
+        path_file_txt="https://github.com/Ahmadzadeh920/FitMatchFinder/blob/main/core/AI_chat_bot/tests/test_docs/test.txt"
+        self.test_file_txt = SimpleUploadedFile(path_file_txt, b"file_content", content_type="text/plain")
 
     def test_valid_pdf_file(self):
-        file = SimpleUploadedFile("file.pdf", b"%PDF-1.4 test content", content_type="application/pdf")
-        data = {'API_Key': self.api_key.id, 'reference_doc': file}
+       
+        data = {'API_Key': self.api_key.id, 'reference_doc': self.test_file}
         serializer = ReferenceSerializer(data=data)
         self.assertTrue(serializer.is_valid())
 
     def test_invalid_file_extension(self):
-        file = SimpleUploadedFile("file.txt", b"Not a PDF", content_type="text/plain")
-        data = {'API_Key': self.api_key.id, 'reference_doc': file}
+        data = {'API_Key': self.api_key.id, 'reference_doc': self.test_file_txt}
         serializer = ReferenceSerializer(data=data)
         self.assertFalse(serializer.is_valid())
         self.assertIn('reference_doc', serializer.errors)
@@ -30,9 +50,16 @@ class ReferenceSerializerTest(TestCase):
 
 class ChatBotQASerializerTest(TestCase):
     def setUp(self):
-        user = CustomUser.objects.create_user(email='testuser@example.com', password='Password$123', is_verified=True)
-        profile = Profile.objects.create(user=user, first_name='Test', last_name='User', phone_number='1234567890')
-        self.api_key = List_API_Key.objects.create(profile=profile, name_service="Test", description="Test")
+        user = CustomUser.objects.create_user(email='testuser2@example.com', password='Password$123', is_verified=True)
+        profile, created = Profile.objects.get_or_create(
+                user=user,
+                defaults={
+                    'first_name': 'Test2',
+                    'last_name': 'User',
+                    'phone_number': '1234567890'
+                }
+            )
+        self.api_key = List_API_Key.objects.create(profile=profile, name_service="Test2", description="Test")
 
     def test_valid_serialization(self):
         qa = ChatBotQA.objects.create(
