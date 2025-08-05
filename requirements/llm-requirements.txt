@@ -10,3 +10,7 @@ pyasn1>=0.6.1
 
 # for the RAG
 colivara_py 
+
+
+# for the AI_chat_bot
+pinecone>=3.0.0

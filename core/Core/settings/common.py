@@ -36,7 +36,8 @@ SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = os.environ.get("SERVERNAMES").split(" ")
+ALLOWED_HOSTS = os.environ.get("SERVERNAMES", "").split()
+
 
 
 # Application definition
@@ -231,9 +232,7 @@ SPECTACULAR_SETTINGS = {
     'VALIDATOR_MUTATIONS': True,
     # Other settings: https://drf-spectacular.readthedocs.io/en/latest/settings.html
 }
-# Add ChromaDB URL to your settings
-CHROMA_SERVER_HOST = "chromadb"  # Service name in Docker Compose
-CHROMA_SERVER_PORT = 8000        # Port for ChromaDB
+
 
 
 # this settings of simple jwt

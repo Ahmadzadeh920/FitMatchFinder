@@ -31,6 +31,16 @@ services:
     volumes:
       - chroma_data:/chroma/chroma
 
+  chromadb_rag:  # second DB used by retriever
+    container_name: chromadb_rag
+    image: chromadb/chroma:latest
+    ports:
+      - "8003:8000"
+    environment:
+      - ALLOW_RESET=true
+    volumes:
+      - chroma_rag_data:/chroma/chroma
+
   backend:
     build: .
     container_name: backend
@@ -45,7 +55,10 @@ services:
       - chromadb
     environment:
       - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
-      - CHROMA_SERVER=chromadb:8000
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+      - CHROMA_RAG_HOST=chromadb_rag
+      - CHROMA_RAG_PORT=8000
 
   worker_one:
     build: .
@@ -115,3 +128,4 @@ services:
 volumes:
   smtp4dev-data:
   chroma_data:
+  chroma_rag_data:

@@ -40,3 +40,4 @@ class ChatBotQA(models.Model):
     def __str__(self):
         # Show a snippet of the question for easy identification
         return self.question[:50] + ("..." if len(self.question) > 50 else "")
+    

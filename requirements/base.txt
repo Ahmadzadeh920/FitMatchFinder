@@ -68,3 +68,7 @@ Redis
 django-celery-beat # for bothe backend and worker  
 django-redis # for bothe backend and worker 
 django-celery-results
+
+
+# AI_chat_bot APP
+PyPDF2 # for PDF reading in  AI_chat_bot app

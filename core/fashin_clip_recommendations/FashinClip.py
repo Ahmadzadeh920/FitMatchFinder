@@ -5,17 +5,17 @@ import requests
 import numpy as np
 import chromadb
 from chromadb.config import Settings
-from django.conf import settings as setting_core
+
 
 class FashionImageRecommender:
     def __init__(self, collection_name=None):
         self.model = CLIPModel.from_pretrained("patrickjohncyh/fashion-clip")
         self.processor = CLIPProcessor.from_pretrained("patrickjohncyh/fashion-clip")
         self.chroma_client = chromadb.HttpClient(
-                host=setting_core.CHROMA_SERVER_HOST,
-                port=setting_core.CHROMA_SERVER_PORT,
-                settings=Settings(allow_reset=True, anonymized_telemetry=False)
-            )
+                    host=os.getenv("CHROMA_HOST", "chromadb"),
+                    port=int(os.getenv("CHROMA_PORT", "8000")),
+                    settings=Settings(allow_reset=True, anonymized_telemetry=False)
+                )
         self.collection_name= collection_name
 
     def load_images(self,full_image_path, id_img):
